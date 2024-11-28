@@ -5,6 +5,7 @@ import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
 import highChartConfig from "./highcharts";
 import mock from "../public/mock-api.json";
+import Link from "next/link";
 
 interface Appointment {
   patientId: string;
@@ -120,16 +121,31 @@ const Dashboard = () => {
   );
 
   const providerPerformanceChartOptions = {
-    chart: { type: "column" },
+    chart: { type: "bar" },
     title: { text: "Provider Performance" },
-    xAxis: { categories: Object.keys(providerPerformance) },
-    yAxis: { title: { text: "Number of Appointments" } },
+    xAxis: {
+      categories: Object.keys(providerPerformance),
+      title: { text: "Providers" },
+    },
+    yAxis: {
+      title: { text: "Number of Appointments" },
+      labels: { style: { color: "#ffffff" } },
+    },
     series: [
       {
         name: "Appointments",
         data: Object.values(providerPerformance),
+        colorByPoint: true,
       },
     ],
+    plotOptions: {
+      bar: {
+        dataLabels: {
+          enabled: true,
+          color: "#ffffff",
+        },
+      },
+    },
   };
 
   const treatmentPopularity = data.reduce<Record<string, number>>(
@@ -155,8 +171,8 @@ const Dashboard = () => {
 
   return (
     <div>
-      <h1 className="w-full fixed top-0 z-10 px-7 py-4 bg-cyan-600 text-lg font-medium text-white">
-        Healthcare Dashboard
+      <h1 className="w-full fixed top-0 z-10 px-7 py-2 sm:py-4 bg-cyan-600 text-center text-lg md:text-xl font-medium text-white">
+        clinical practice dashboard <Link href="https://daryldeogracias.com" className="font-normal text-sm animate-ping">daryldeogracias©2024</Link>
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 md:gap-10 mx-4 sm:mx-6 md:mx-10 mt-24 ">
         <div className="relative rounded-xl overflow-hidden">
