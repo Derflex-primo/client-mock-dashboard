@@ -1,6 +1,14 @@
 import Highcharts from "highcharts";
+import Treemap from "highcharts/modules/treemap";
+import Heatmap from "highcharts/modules/heatmap";
 
-const highChartConfig = Highcharts.setOptions({
+
+if (typeof Highcharts === 'object' && typeof window === 'undefined') {
+    Heatmap(Highcharts);
+    Treemap(Highcharts);
+}
+
+Highcharts.setOptions({
     chart: {
         backgroundColor: "#1e1e1e",
         style: { fontFamily: "Arial, sans-serif" },
@@ -37,4 +45,4 @@ const highChartConfig = Highcharts.setOptions({
     },
 });
 
-export default highChartConfig;
+export default Highcharts;

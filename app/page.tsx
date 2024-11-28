@@ -2,10 +2,9 @@
 
 import React from "react";
 import HighchartsReact from "highcharts-react-official";
-import Highcharts from "highcharts";
-import highChartConfig from "./highcharts";
-import mock from "../public/mock-api.json";
 import Link from "next/link";
+import highcharts from "./highcharts";
+import mock from "../public/mock-api.json";
 
 interface Appointment {
   patientId: string;
@@ -18,7 +17,6 @@ interface Appointment {
 }
 
 const Dashboard = () => {
-  highChartConfig;
   const data: Appointment[] = mock;
 
   const appointmentStatusCounts = data.reduce<Record<string, number>>(
@@ -157,14 +155,36 @@ const Dashboard = () => {
   );
 
   const treatmentPopularityChartOptions = {
-    chart: { type: "column" },
+    chart: { type: "heatmap" },
     title: { text: "Treatment Popularity" },
-    xAxis: { categories: Object.keys(treatmentPopularity) },
-    yAxis: { title: { text: "Frequency" } },
+    xAxis: {
+      categories: Object.keys(treatmentPopularity),
+      title: { text: "Treatments" },
+    },
+    yAxis: {
+      visible: false,
+    },
+    colorAxis: {
+      min: 0,
+      stops: [
+        [0, "#e0f3f8"],
+        [0.5, "#2592f7"],
+        [1, "#1149f2"],
+      ],
+    },
     series: [
       {
         name: "Treatments",
-        data: Object.values(treatmentPopularity),
+        data: Object.entries(treatmentPopularity).map(([_, count], i) => [
+          i,
+          0,
+          count,
+        ]),
+        dataLabels: {
+          enabled: true,
+          color: "#000000",
+          format: "{point.value}",
+        }
       },
     ],
   };
@@ -172,42 +192,48 @@ const Dashboard = () => {
   return (
     <div>
       <h1 className="w-full fixed top-0 z-10 px-7 py-2 sm:py-4 bg-cyan-600 text-center text-lg md:text-xl font-medium text-white">
-        clinical practice dashboard <Link href="https://daryldeogracias.com" className="font-normal text-sm animate-ping">daryldeogracias©2024</Link>
+        clinical practice dashboard{" "}
+        <Link
+          href="https://daryldeogracias.com"
+          className="font-normal text-sm"
+        >
+          daryldeogracias©2024
+        </Link>
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 md:gap-10 mx-4 sm:mx-6 md:mx-10 mt-24 ">
         <div className="relative rounded-xl overflow-hidden">
           <HighchartsReact
-            highcharts={Highcharts}
+            highcharts={highcharts}
             options={appointmentStatusChartOptions}
           />
         </div>
         <div className="relative rounded-xl overflow-hidden">
           <HighchartsReact
-            highcharts={Highcharts}
+            highcharts={highcharts}
             options={revenueByTreatmentChartOptions}
           />
         </div>
         <div className="relative rounded-xl overflow-hidden">
           <HighchartsReact
-            highcharts={Highcharts}
+            highcharts={highcharts}
             options={appointmentsOverTimeChartOptions}
           />
         </div>
         <div className="relative rounded-xl overflow-hidden">
           <HighchartsReact
-            highcharts={Highcharts}
+            highcharts={highcharts}
             options={balanceDistributionChartOptions}
           />
         </div>
         <div className="relative rounded-xl overflow-hidden">
           <HighchartsReact
-            highcharts={Highcharts}
+            highcharts={highcharts}
             options={providerPerformanceChartOptions}
           />
         </div>
         <div className="relative rounded-xl overflow-hidden">
           <HighchartsReact
-            highcharts={Highcharts}
+            highcharts={highcharts}
             options={treatmentPopularityChartOptions}
           />
         </div>
