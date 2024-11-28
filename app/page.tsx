@@ -289,6 +289,113 @@ const Dashboard = () => {
     ],
   };
 
+  const providerAppointmentsOverTime = data.reduce<
+    Record<string, Record<string, number>>
+  >((acc, item) => {
+    const month = item.appointmentDate.substring(0, 7);
+    if (!acc[item.provider]) acc[item.provider] = {};
+    acc[item.provider][month] = (acc[item.provider][month] || 0) + 1;
+    return acc;
+  }, {});
+
+  const providersTrendsChartOptions = {
+    chart: { type: "line" },
+    title: { text: "Appointment Trends by Provider" },
+    xAxis: {
+      categories: [
+        ...new Set(data.map((item) => item.appointmentDate.substring(0, 7))),
+      ].sort(),
+    },
+    yAxis: { title: { text: "Number of Appointments" } },
+    series: Object.keys(providerAppointmentsOverTime).map((provider) => ({
+      name: provider,
+      data: [
+        ...new Set(data.map((item) => item.appointmentDate.substring(0, 7))),
+      ]
+        .sort()
+        .map((month) => providerAppointmentsOverTime[provider][month] || 0),
+    })),
+  };
+
+  const treatmentSuccessByProvider = data.reduce<
+    Record<string, { successful: number; unsuccessful: number }>
+  >((acc, item) => {
+    if (!acc[item.provider]) {
+      acc[item.provider] = { successful: 0, unsuccessful: 0 };
+    }
+    if (item.appointmentStatus === "Completed") {
+      acc[item.provider].successful += 1;
+    } else if (["Cancelled", "No Show"].includes(item.appointmentStatus)) {
+      acc[item.provider].unsuccessful += 1;
+    }
+    return acc;
+  }, {});
+
+  const stackedColumnChartOptions = {
+    chart: { type: "column" },
+    title: { text: "Treatment Success Rates by Provider" },
+    xAxis: {
+      categories: Object.keys(treatmentSuccessByProvider),
+      title: { text: "Providers" },
+    },
+    yAxis: {
+      min: 0,
+      title: { text: "Number of Treatments" },
+      stackLabels: { enabled: true },
+    },
+    plotOptions: {
+      column: { stacking: "normal", dataLabels: { enabled: true } },
+    },
+    series: [
+      {
+        name: "Successful",
+        data: Object.values(treatmentSuccessByProvider).map(
+          (item) => item.successful
+        ),
+        color: "green",
+      },
+      {
+        name: "Unsuccessful",
+        data: Object.values(treatmentSuccessByProvider).map(
+          (item) => item.unsuccessful
+        ),
+        color: "red",
+      },
+    ],
+  };
+
+  const patientVisitCounts = data.reduce<Record<string, number>>(
+    (acc, item) => {
+      acc[item.patientId] = (acc[item.patientId] || 0) + 1;
+      return acc;
+    },
+    {}
+  );
+
+  const retentionData = {
+    singleVisit: Object.values(patientVisitCounts).filter(
+      (count) => count === 1
+    ).length,
+    repeatVisits: Object.values(patientVisitCounts).filter((count) => count > 1)
+      .length,
+  };
+  const patientRetentionChartOptions = {
+    chart: { type: "bar" },
+    title: { text: "Patient Retention Rates" },
+    xAxis: {
+      categories: ["Single Visit", "Repeat Visits"],
+      title: { text: "Patient Category" },
+    },
+    yAxis: { title: { text: "Number of Patients" } },
+    series: [
+      {
+        name: "Patients",
+        data: [retentionData.singleVisit, retentionData.repeatVisits],
+        colorByPoint: true,
+      },
+    ],
+  };
+
   return (
     <div>
       <h1 className="w-full fixed top-0 z-10 px-7 py-2 sm:py-4 bg-cyan-600 text-center text-lg md:text-xl font-medium text-white">
@@ -353,6 +460,24 @@ const Dashboard = () => {
           <HighchartsReact
             highcharts={highcharts}
             options={revenueByProviderChartOptions}
+          />
+        </div>
+        <div className="relative rounded-xl overflow-hidden">
+          <HighchartsReact
+            highcharts={highcharts}
+            options={providersTrendsChartOptions}
+          />
+        </div>
+        <div className="relative rounded-xl overflow-hidden">
+          <HighchartsReact
+            highcharts={highcharts}
+            options={stackedColumnChartOptions}
+          />
+        </div>
+        <div className="relative rounded-xl overflow-hidden">
+          <HighchartsReact
+            highcharts={highcharts}
+            options={patientRetentionChartOptions}
           />
         </div>
       </div>
