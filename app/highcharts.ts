@@ -2,7 +2,6 @@ import Highcharts from "highcharts";
 import Treemap from "highcharts/modules/treemap";
 import Heatmap from "highcharts/modules/heatmap";
 
-
 if (typeof Highcharts === 'object' && typeof window === 'undefined') {
     Heatmap(Highcharts);
     Treemap(Highcharts);

@@ -146,6 +146,79 @@ const Dashboard = () => {
     },
   };
 
+  const providerRevenue = data.reduce<Record<string, Record<string, number>>>(
+    (acc, item) => {
+      if (!acc[item.provider]) acc[item.provider] = {};
+      acc[item.provider][item.treatment] =
+        (acc[item.provider][item.treatment] || 0) + item.price;
+      return acc;
+    },
+    {}
+  );
+
+  const providers = Object.keys(providerRevenue);
+  const treatments = [...new Set(data.map((item) => item.treatment))];
+
+  const providerRevenueChartOptions = {
+    chart: { type: "bar" },
+    title: { text: "Provider Revenue Comparison" },
+    xAxis: {
+      categories: providers,
+      title: { text: "Providers" },
+    },
+    yAxis: {
+      min: 0,
+      title: { text: "Revenue ($)" },
+    },
+    plotOptions: {
+      bar: { stacking: "normal" },
+    },
+    series: treatments.map((treatment) => ({
+      name: treatment,
+      data: providers.map(
+        (provider) => providerRevenue[provider][treatment] || 0
+      ),
+    })),
+  };
+
+  const revenueByProvider = data.reduce<Record<string, number>>((acc, item) => {
+    acc[item.provider] = (acc[item.provider] || 0) + item.price;
+    return acc;
+  }, {});
+
+  const totalRevenue = Object.values(revenueByProvider).reduce(
+    (sum, revenue) => sum + revenue,
+    0
+  );
+
+  const revenueByProviderChartOptions = {
+    chart: {
+      type: "pie",
+    },
+    title: {
+      text: "Revenue Contribution by Provider",
+    },
+    plotOptions: {
+      pie: {
+        innerSize: "50%",
+        dataLabels: {
+          enabled: true,
+          format: "{point.name}: {point.percentage:.1f}%",
+        },
+      },
+    },
+    series: [
+      {
+        name: "Revenue",
+        colorByPoint: true,
+        data: Object.entries(revenueByProvider).map(([provider, revenue]) => ({
+          name: provider,
+          y: parseFloat(((revenue / totalRevenue) * 100).toFixed(2)),
+        })),
+      },
+    ],
+  };
+
   const treatmentPopularity = data.reduce<Record<string, number>>(
     (acc, item) => {
       acc[item.treatment] = (acc[item.treatment] || 0) + 1;
@@ -184,7 +257,34 @@ const Dashboard = () => {
           enabled: true,
           color: "#000000",
           format: "{point.value}",
-        }
+        },
+      },
+    ],
+  };
+
+  const monthlyRevenue = data.reduce<Record<string, number>>((acc, item) => {
+    const month = item.appointmentDate.substring(0, 7);
+    acc[month] = (acc[month] || 0) + item.price;
+    return acc;
+  }, {});
+
+  const monthlyRevenueChartOptions = {
+    chart: { type: "area" },
+    title: { text: "Monthly Revenue Trend" },
+    xAxis: {
+      categories: Object.keys(monthlyRevenue).sort(),
+      title: { text: "Month" },
+    },
+    yAxis: {
+      title: { text: "Revenue ($)" },
+      allowDecimals: false,
+    },
+    series: [
+      {
+        name: "Revenue",
+        data: Object.keys(monthlyRevenue)
+          .sort()
+          .map((month) => parseFloat(monthlyRevenue[month].toFixed(2))),
       },
     ],
   };
@@ -235,6 +335,24 @@ const Dashboard = () => {
           <HighchartsReact
             highcharts={highcharts}
             options={treatmentPopularityChartOptions}
+          />
+        </div>
+        <div className="relative rounded-xl overflow-hidden">
+          <HighchartsReact
+            highcharts={highcharts}
+            options={providerRevenueChartOptions}
+          />
+        </div>
+        <div className="relative rounded-xl overflow-hidden">
+          <HighchartsReact
+            highcharts={highcharts}
+            options={monthlyRevenueChartOptions}
+          />
+        </div>
+        <div className="relative rounded-xl overflow-hidden">
+          <HighchartsReact
+            highcharts={highcharts}
+            options={revenueByProviderChartOptions}
           />
         </div>
       </div>
