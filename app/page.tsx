@@ -1,101 +1,203 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import React from "react";
+import HighchartsReact from "highcharts-react-official";
+import Highcharts from "highcharts";
+import highChartConfig from "./highcharts";
+import mock from "../public/mock-api.json";
+
+interface Appointment {
+  patientId: string;
+  provider: string;
+  treatment: string;
+  price: number;
+  balance: number;
+  appointmentDate: string;
+  appointmentStatus: string;
+}
+
+const Dashboard = () => {
+  highChartConfig;
+  const data: Appointment[] = mock;
+
+  const appointmentStatusCounts = data.reduce<Record<string, number>>(
+    (acc, item) => {
+      acc[item.appointmentStatus] = (acc[item.appointmentStatus] || 0) + 1;
+      return acc;
+    },
+    {}
+  );
+
+  const appointmentStatusChartOptions = {
+    chart: { type: "pie" },
+    title: { text: "Appointment Status Breakdown" },
+    series: [
+      {
+        name: "Status",
+        colorByPoint: true,
+        data: Object.entries(appointmentStatusCounts).map(
+          ([status, count]) => ({
+            name: status,
+            y: count,
+          })
+        ),
+      },
+    ],
+  };
+
+  const revenueByTreatment = data.reduce<Record<string, number>>(
+    (acc, item) => {
+      acc[item.treatment] = (acc[item.treatment] || 0) + item.price;
+      return acc;
+    },
+    {}
+  );
+
+  const revenueByTreatmentChartOptions = {
+    chart: { type: "column" },
+    title: { text: "Revenue by Treatment" },
+    xAxis: { categories: Object.keys(revenueByTreatment) },
+    yAxis: { title: { text: "Revenue ($)" } },
+    series: [
+      {
+        name: "Revenue",
+        data: Object.values(revenueByTreatment),
+      },
+    ],
+  };
+
+  const appointmentsByDate = data.reduce<Record<string, number>>(
+    (acc, item) => {
+      acc[item.appointmentDate] = (acc[item.appointmentDate] || 0) + 1;
+      return acc;
+    },
+    {}
+  );
+
+  const appointmentsOverTimeChartOptions = {
+    chart: { type: "line" },
+    title: { text: "Appointments Over Time" },
+    xAxis: { categories: Object.keys(appointmentsByDate).sort() },
+    yAxis: { title: { text: "Number of Appointments" } },
+    series: [
+      {
+        name: "Appointments",
+        data: Object.keys(appointmentsByDate)
+          .sort()
+          .map((date) => appointmentsByDate[date]),
+      },
+    ],
+  };
+
+  const balanceData = data.map((item) => item.balance);
+  const balanceDistributionChartOptions = {
+    chart: { type: "column" },
+    title: { text: "Balance Distribution" },
+    xAxis: {
+      title: { text: "Balance Amount ($)" },
+      categories: ["0-100", "101-500", "501-1000", ">1000"],
+    },
+    yAxis: { title: { text: "Number of Appointments" } },
+    series: [
+      {
+        name: "Balances",
+        data: [
+          balanceData.filter((b) => b <= 100).length,
+          balanceData.filter((b) => b > 100 && b <= 500).length,
+          balanceData.filter((b) => b > 500 && b <= 1000).length,
+          balanceData.filter((b) => b > 1000).length,
+        ],
+      },
+    ],
+  };
+
+  const providerPerformance = data.reduce<Record<string, number>>(
+    (acc, item) => {
+      acc[item.provider] = (acc[item.provider] || 0) + 1;
+      return acc;
+    },
+    {}
+  );
+
+  const providerPerformanceChartOptions = {
+    chart: { type: "column" },
+    title: { text: "Provider Performance" },
+    xAxis: { categories: Object.keys(providerPerformance) },
+    yAxis: { title: { text: "Number of Appointments" } },
+    series: [
+      {
+        name: "Appointments",
+        data: Object.values(providerPerformance),
+      },
+    ],
+  };
+
+  const treatmentPopularity = data.reduce<Record<string, number>>(
+    (acc, item) => {
+      acc[item.treatment] = (acc[item.treatment] || 0) + 1;
+      return acc;
+    },
+    {}
+  );
+
+  const treatmentPopularityChartOptions = {
+    chart: { type: "column" },
+    title: { text: "Treatment Popularity" },
+    xAxis: { categories: Object.keys(treatmentPopularity) },
+    yAxis: { title: { text: "Frequency" } },
+    series: [
+      {
+        name: "Treatments",
+        data: Object.values(treatmentPopularity),
+      },
+    ],
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div>
+      <h1 className="w-full fixed top-0 z-10 px-7 py-4 bg-cyan-600 text-lg font-medium text-white">
+        Healthcare Dashboard
+      </h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 md:gap-10 mx-4 sm:mx-6 md:mx-10 mt-24 ">
+        <div className="relative rounded-xl overflow-hidden">
+          <HighchartsReact
+            highcharts={Highcharts}
+            options={appointmentStatusChartOptions}
+          />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+        <div className="relative rounded-xl overflow-hidden">
+          <HighchartsReact
+            highcharts={Highcharts}
+            options={revenueByTreatmentChartOptions}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
+        </div>
+        <div className="relative rounded-xl overflow-hidden">
+          <HighchartsReact
+            highcharts={Highcharts}
+            options={appointmentsOverTimeChartOptions}
           />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
+        </div>
+        <div className="relative rounded-xl overflow-hidden">
+          <HighchartsReact
+            highcharts={Highcharts}
+            options={balanceDistributionChartOptions}
           />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        </div>
+        <div className="relative rounded-xl overflow-hidden">
+          <HighchartsReact
+            highcharts={Highcharts}
+            options={providerPerformanceChartOptions}
+          />
+        </div>
+        <div className="relative rounded-xl overflow-hidden">
+          <HighchartsReact
+            highcharts={Highcharts}
+            options={treatmentPopularityChartOptions}
+          />
+        </div>
+      </div>
     </div>
   );
-}
+};
+
+export default Dashboard;

@@ -1,0 +1,138 @@
+[
+    {
+      "patientId": "P001",
+      "provider": "Mary Johnson",
+      "treatment": "Cavity Filling",
+      "price": 1519.32,
+      "balance": 724.7,
+      "appointmentDate": "2024-11-27",
+      "appointmentStatus": "No Show"
+    },
+    {
+      "patientId": "P002",
+      "provider": "Michael Spears",
+      "treatment": "Root Canal",
+      "price": 880.75,
+      "balance": 49.38,
+      "appointmentDate": "2024-11-27",
+      "appointmentStatus": "Cancelled"
+    },
+    {
+      "patientId": "P003",
+      "provider": "Samantha Benitez",
+      "treatment": "Dental Implant",
+      "price": 543.75,
+      "balance": 30.85,
+      "appointmentDate": "2024-11-27",
+      "appointmentStatus": "Scheduled"
+    },
+    {
+      "patientId": "P004",
+      "provider": "Michael Spears",
+      "treatment": "Whitening",
+      "price": 910.99,
+      "balance": 230.52,
+      "appointmentDate": "2024-11-27",
+      "appointmentStatus": "Cancelled"
+    },
+    {
+      "patientId": "P005",
+      "provider": "William Bradley",
+      "treatment": "Dental Implant",
+      "price": 1596.48,
+      "balance": 772.52,
+      "appointmentDate": "2024-11-27",
+      "appointmentStatus": "No Show"
+    },
+    {
+      "patientId": "P006",
+      "provider": "Elizabeth Carter",
+      "treatment": "Teeth Cleaning",
+      "price": 250.0,
+      "balance": 0.0,
+      "appointmentDate": "2024-11-25",
+      "appointmentStatus": "Completed"
+    },
+    {
+      "patientId": "P007",
+      "provider": "John Anderson",
+      "treatment": "Periodontal Surgery",
+      "price": 2000.0,
+      "balance": 500.0,
+      "appointmentDate": "2024-11-20",
+      "appointmentStatus": "Scheduled"
+    },
+    {
+      "patientId": "P008",
+      "provider": "Michael Spears",
+      "treatment": "Root Canal",
+      "price": 850.0,
+      "balance": 100.0,
+      "appointmentDate": "2024-11-18",
+      "appointmentStatus": "Completed"
+    },
+    {
+      "patientId": "P009",
+      "provider": "William Bradley",
+      "treatment": "Dental Crown",
+      "price": 1200.0,
+      "balance": 0.0,
+      "appointmentDate": "2024-11-10",
+      "appointmentStatus": "Completed"
+    },
+    {
+      "patientId": "P010",
+      "provider": "Elizabeth Carter",
+      "treatment": "Gum Treatment",
+      "price": 600.0,
+      "balance": 150.0,
+      "appointmentDate": "2024-11-15",
+      "appointmentStatus": "Cancelled"
+    },
+    {
+      "patientId": "P011",
+      "provider": "Samantha Benitez",
+      "treatment": "Orthodontic Braces",
+      "price": 3000.0,
+      "balance": 1000.0,
+      "appointmentDate": "2024-11-12",
+      "appointmentStatus": "No Show"
+    },
+    {
+      "patientId": "P012",
+      "provider": "Mary Johnson",
+      "treatment": "Whitening",
+      "price": 400.0,
+      "balance": 0.0,
+      "appointmentDate": "2024-11-05",
+      "appointmentStatus": "Completed"
+    },
+    {
+      "patientId": "P013",
+      "provider": "John Anderson",
+      "treatment": "Tooth Extraction",
+      "price": 350.0,
+      "balance": 50.0,
+      "appointmentDate": "2024-11-03",
+      "appointmentStatus": "Cancelled"
+    },
+    {
+      "patientId": "P014",
+      "provider": "William Bradley",
+      "treatment": "Teeth Cleaning",
+      "price": 250.0,
+      "balance": 0.0,
+      "appointmentDate": "2024-11-01",
+      "appointmentStatus": "Completed"
+    },
+    {
+      "patientId": "P015",
+      "provider": "Elizabeth Carter",
+      "treatment": "Root Canal",
+      "price": 900.0,
+      "balance": 200.0,
+      "appointmentDate": "2024-10-30",
+      "appointmentStatus": "Scheduled"
+    }
+  ]
+  
