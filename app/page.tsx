@@ -4,7 +4,7 @@ import React from "react";
 import HighchartsReact from "highcharts-react-official";
 import Link from "next/link";
 import highcharts from "./highcharts";
-import mock from "../public/mock-api.json";
+import mock from "./generated";
 
 interface Appointment {
   patientId: string;
@@ -60,30 +60,36 @@ const Dashboard = () => {
     series: [
       {
         name: "Revenue",
-        data: Object.values(revenueByTreatment),
+        data: Object.values(revenueByTreatment).map((value) =>
+          parseFloat(value.toFixed(2))
+        ),
       },
     ],
   };
 
-  const appointmentsByDate = data.reduce<Record<string, number>>(
+  const appointmentsByMonth = data.reduce<Record<string, number>>(
     (acc, item) => {
-      acc[item.appointmentDate] = (acc[item.appointmentDate] || 0) + 1;
+      const date = new Date(item.appointmentDate);
+      const monthKey = `${date.getFullYear()}-${String(
+        date.getMonth() + 1
+      ).padStart(2, "0")}`;
+      acc[monthKey] = (acc[monthKey] || 0) + 1;
       return acc;
     },
     {}
   );
 
+  const sortedMonths = Object.keys(appointmentsByMonth).sort();
+
   const appointmentsOverTimeChartOptions = {
     chart: { type: "line" },
-    title: { text: "Appointments Over Time" },
-    xAxis: { categories: Object.keys(appointmentsByDate).sort() },
+    title: { text: "Appointments Over Time (Monthly)" },
+    xAxis: { categories: sortedMonths },
     yAxis: { title: { text: "Number of Appointments" } },
     series: [
       {
         name: "Appointments",
-        data: Object.keys(appointmentsByDate)
-          .sort()
-          .map((date) => appointmentsByDate[date]),
+        data: sortedMonths.map((month) => appointmentsByMonth[month]),
       },
     ],
   };
@@ -175,8 +181,8 @@ const Dashboard = () => {
     },
     series: treatments.map((treatment) => ({
       name: treatment,
-      data: providers.map(
-        (provider) => providerRevenue[provider][treatment] || 0
+      data: providers.map((provider) =>
+        parseFloat((providerRevenue[provider][treatment] || 0).toFixed(2))
       ),
     })),
   };
