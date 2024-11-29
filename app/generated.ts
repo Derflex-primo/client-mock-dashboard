@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 export default [
     ...Array.from({ length: 5000 }, (_, i) => {
         const doctors = [

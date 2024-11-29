@@ -253,6 +253,7 @@ const Dashboard = () => {
     series: [
       {
         name: "Treatments",
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         data: Object.entries(treatmentPopularity).map(([_, count], i) => [
           i,
           0,
